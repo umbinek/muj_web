@@ -1,0 +1,21 @@
+# --- TAJNÁ DATA A HESLA ---
+config.py
+
+# --- DATABÁZE A DYNAMICKÉ STAVY ---
+smartsensor/*.db
+*.db
+last_time.txt
+
+# --- MEDIA A FOTKY ---
+secure_videos/
+zaznam_z_tel/
+test.jpg
+
+# --- STARÉ ZÁLOHY ---
+app_puvodni.py
+
+# --- PYTHON BORDEL ---
+__pycache__/
+*.pyc
+smartsensor/venv/
+venv/

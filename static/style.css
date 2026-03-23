@@ -1,0 +1,25 @@
+body {
+    background-color: #f8f9fa;
+}
+
+/* Přizpůsobení velikosti textu na menších zařízeních */
+h1 {
+    color: #007bff;
+    font-size: 2rem; /* Základní velikost */
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem; /* Menší text pro telefony */
+    }
+}
+
+/* Přizpůsobení patičky */
+footer {
+    font-size: 0.9rem;
+}
+
+/* Upravíme mezery v kontejnerech */
+.container {
+    padding: 20px;
+}

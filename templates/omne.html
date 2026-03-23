@@ -1,0 +1,93 @@
+
+{% extends "base.html" %}
+{% block title %}O mně{% endblock %}
+
+{% block content %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petr Strejček - Osobní stránka</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <header class="text-center">
+			<div class="position-relative d-inline-block">
+				<img src="https://avatars.githubusercontent.com/u/74242350?v=4" alt="Profilová fotka" class="profile-img mb-3">
+				<div class="position-absolute" style="top: 50%; left: 110%; transform: translateY(-50%); display: flex; align-items: center;">
+					<svg width="30" height="30" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M10,50 Q50,10 90,50 Q50,90 10,50" stroke="black" stroke-width="3" fill="none"/>
+					</svg>
+					<span class="ms-2 text-dark fw-bold">Naše kočka Lidunka, když byla ještě kotě</span>
+				</div>
+			</div>
+
+            <h1>Petr Strejček</h1>
+            <p>Embedded System Test Developer | Technologie & Inovace</p>
+            <p><a href="mailto:Petr.strej@gmail.com">Petr.strej@gmail.com</a> | <a href="https://github.com/umbinek" target="_blank">GitHub</a></p>
+        </header>
+        
+        <section class="mt-4">
+            <h2>O mně</h2>
+            <p>Jsem absolvent lesního inženýrství s vášní pro technologie a inovace. Aktuálně pracuji ve společnosti Benderrobotics s.r.o., kde se zaměřuji na analýzu systémových požadavků, návrh a implementaci systémových testů pro embedded zařízení.</p>
+        </section>
+        
+        <section class="mt-4">
+            <h2>Dovednosti</h2>
+            <ul class="list-group">
+                <li class="list-group-item">Python</li>
+                <li class="list-group-item">HTML, CSS</li>
+                <li class="list-group-item">Git, GitLab</li>
+                <li class="list-group-item">Redmine</li>
+                <li class="list-group-item">Google Workspace</li>
+                <li class="list-group-item">ArcGIS Pro</li>
+            </ul>
+        </section>
+        
+        <section class="mt-4">
+            <h2>Pracovní zkušenosti</h2>
+            <div class="card p-3 mb-3">
+                <h5>Benderrobotics s.r.o.</h5>
+                <p class="text-muted">Embedded System Test Developer (Duben 2023 – současnost, Brno)</p>
+                <p>Analýza systémových požadavků, návrh a implementace testů pro embedded zařízení, vývoj podpůrných testovacích nástrojů v Pythonu.</p>
+            </div>
+            <div class="card p-3 mb-3">
+                <h5>Radio Proglas s.r.o.</h5>
+                <p class="text-muted">Technik (Duben 2021 – Duben 2022, Brno)</p>
+                <p>HW a SW technická podpora (part-time).</p>
+            </div>
+            <div class="card p-3 mb-3">
+                <h5>ZŠ Šlapanice</h5>
+                <p class="text-muted">Plavčík (Leden 2018 – Duben 2021, Šlapanice)</p>
+            </div>
+        </section>
+        
+        <section class="mt-4">
+            <h2>Vzdělání</h2>
+            <div class="card p-3 mb-3">
+                <h5>Mendelova univerzita v Brně</h5>
+                <p class="text-muted">Ing. - Lesní inženýrství (Září 2022 – Červen 2024, Brno)</p>
+                <p>Diplomová práce: Klasifikace druhů stromů pomocí metod strojového a hlubokého učení v obrazových datech získaných bezpilotním leteckým systémem.</p>
+            </div>
+            <div class="card p-3 mb-3">
+                <h5>Mendelova univerzita v Brně</h5>
+                <p class="text-muted">Bc. - Lesnictví (Září 2019 – Červen 2022, Brno)</p>
+            </div>
+        </section>
+        
+    </div>
+</body>
+{% endblock %}
+

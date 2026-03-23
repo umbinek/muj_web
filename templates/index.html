@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Domů - Smart Home Hub{% endblock %}
+
+{% block content %}
+    <h1>Vítej na mém webu!</h1>
+
+    <section class="projekty-popis mt-4">
+        <h3>Jak to celé funguje?</h3>
+        <p>
+            Tento web slouží jako hlavní centrum pro moje IoT zařízení. Celé to běží na <strong>Raspberry Pi 3</strong>, které funguje jako server a datové úložiště.
+        </p>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Hardware a senzory</h5>
+                <ul>
+                    <li><strong>Měření:</strong> Přímo na malině mám DHT senzor. Další data (třeba kvalitu vzduchu) posílá <strong>ESP32-C3</strong> přes Wi-Fi.</li>
+                    <li><strong>Kamery:</strong> Mám tu <strong>ESP32-CAM</strong>, která fotí zahradu, a <strong>Raspberry Pi Zero 2</strong>, které přes software <em>Motion</em> hlídá pohyb.</li>
+                    <li><strong>Úložiště:</strong> Fotky a videa se ukládají na USB disk. Mám nastavený skript, který každý den smaže záznamy starší než 7 dní, aby se disk nezaplnil.</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h5>Vývoj a automatizace</h5>
+                <ul>
+                    <li><strong>Kódování z mobilu:</strong> Programuju v prohlížeči přes <em>Code-server</em>, který mi běží v <strong>Termuxu</strong> na telefonu Xiaomi Mi 9 SE.</li>
+                    <li><strong>GitHub Actions:</strong> Jakmile udělám <code>git push</code>, automaticky se spustí testy (Pytest), které zkontrolují, jestli jsem v kódu neudělal chybu.</li>
+                    <li><strong>Dostupnost:</strong> Díky <strong>Tailscale</strong> se k serveru připojím odkudkoliv. Web běží jako linuxová služba, takže se po restartu sám zapne.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <hr>
+
+    <section class="statistiky">
+        <h3>Aktuální stav senzorů</h3>
+        <div class="card p-3 bg-light">
+            <p>Aktuální teplota: <strong>{{ temperature if temperature is not none else "Není dostupná" }} °C</strong></p>
+            <p>Vlhkost: <strong>{{ humidity if humidity is not none else "Není dostupná" }} %</strong></p>
+            <p>Kvalita vzduchu (CO2/VOC): <strong>{{ air_quality }} PPM</strong></p>
+            <p class="mb-0"><small><em>Data se aktualizují automaticky na pozadí.</em></small></p>
+        </div>
+    </section>
+
+    <hr>
+
+    <div class="footer-links text-muted">
+        <p>Moje statistiky najdeš na <a href="https://worldoftanks.eu/en/community/accounts/514867680-Umbinek/" target="_blank">World of Tanks</a>.</p>
+    </div>
+{% endblock %}

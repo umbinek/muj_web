@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Můj Raspberry Web{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigační lišta -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Umbinek.eu</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/">Domů</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/scraping">Scraping</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/gabca">Gábinka</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/omne">O mně</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/kamera">Kamera</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/login">Přihlášení</a></li>
+		    <li class="nav-item"><a class="nav-link" href="/kocka">Kamera kočka</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hlavní obsah -->
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Patička -->
+    <footer class="text-center py-4 bg-dark text-light">
+        <p>&copy; 2025 Umbinek.eu</p>
+    </footer>
+
+    <!-- Bootstrap JavaScript (pro menu na mobilech) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

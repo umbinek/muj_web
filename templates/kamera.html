@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Kamera{% endblock %}
+
+{% block content %}
+  <h1>Aktualni pohled z kamery (Raspberry Pi Zero)</h1>
+
+  <p>Posledni fotka z Raspberry Pi: <strong>{{ last_updated }}</strong></p>
+  <img src="{{ url_for('static', filename='photos/rpi/latest.jpg') }}?{{ random() }}" width="600">
+
+  <hr>
+
+  <h2>ESP32 slider</h2>
+
+  <div>
+    <input type="range" id="slider" min="0" max="0" value="0" oninput="updateSliderImage(this.value)">
+  </div>
+
+  <img id="esp32-img" src="" width="600">
+  <p id="esp32-time">Cas: neznamy</p>
+
+  <script>
+    let images = [];
+    let currentIndex = 0;
+
+    function updateSliderImage(index) {
+      currentIndex = index;
+      const img = document.getElementById("esp32-img");
+      const time = document.getElementById("esp32-time");
+
+      if (images.length > 0) {
+        const filename = images[index];
+        img.src = `/static/photos/esp32/${filename}?t=${new Date().getTime()}`;
+        time.innerText = "Cas: " + filename.replace(".jpg", "").replace("_", " ");
+      }
+    }
+
+    async function fetchImages() {
+      try {
+        const response = await fetch("/esp32_photos");
+        const newImages = await response.json();
+
+        if (JSON.stringify(newImages) !== JSON.stringify(images)) {
+          const slider = document.getElementById("slider");
+          const wasAtEnd = currentIndex >= images.length - 1;
+
+          images = newImages;
+          slider.max = images.length - 1;
+
+          if (wasAtEnd || slider.value == 0) {
+            slider.value = images.length - 1;
+            updateSliderImage(slider.value);
+          }
+        }
+      } catch (e) {
+        console.error("Chyba pri nacitani:", e);
+      }
+    }
+
+    fetchImages();
+    setInterval(fetchImages, 10000);
+  </script>
+
+  <p>Fotky z ESP32 se nacitaji kazdych 10 sekund.</p>
+{% endblock %}

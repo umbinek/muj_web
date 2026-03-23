@@ -1,0 +1,111 @@
+1. Architektura systému
+Systém slouží k nahrávání, ukládání a zobrazování záznamů z bezpečnostních kamer (Android telefon, RPi Zero, ESP32) na centrálním webovém rozhraní.
+
+Hlavní server: Raspberry Pi 3 (běží zde web a Python logika).
+
+Úložiště: USB Flash disk (připojený jako hlavní úložiště, aby se neničila SD karta).
+
+Přístup: Zvenku přes Cloudflare Tunnel (veřejná doména) nebo Tailscale (VPN).
+
+2. Souborový systém a Ukládání (To nejdůležitější)
+Zde je "trik", jak to celé funguje, aby se data ukládala na USB, ale telefon si myslel, že nahrává jinam.
+
+Fyzické umístění dat (USB): /home/cernamalina/secure_videos
+
+Toto je Mount Point pro USB disk.
+
+Podadresáře: /telefon, /kocka.
+
+Virtuální cesta pro telefon (Symlink): /home/cernamalina/zaznam_z_tel
+
+Toto je pouze odkaz (zástupce), který míří do secure_videos/telefon.
+
+Důvod: Telefon má v aplikaci nastavenou tuto starou cestu.
+
+Příkazy pro kontrolu úložiště:
+
+Bash
+
+df -h  # Ukáže zaplnění disků (hledej /dev/sda1 připojené v /secure_videos)
+ls -l ~ # Ukáže, kam míří symlink zaznam_z_tel
+3. Webová Aplikace (Flask)
+Umístění: /home/cernamalina/app.py
+
+Spouštění: python3 app.py (nebo přes službu systemd, pokud je nastavena).
+
+Fungování:
+
+Uživatel otevře stránku /kocka.
+
+Skript nacti_a_uklid_videa() projde složku na USB.
+
+Úklid: Pokud najde video > 30 MB (chyba nastavení telefonu), smaže ho.
+
+Zobrazení: Vybere 3 nejnovější videa a pošle je do HTML.
+
+Bezpečnost: Videa nejsou ve veřejné složce static. Přehrávají se přes speciální routu /prehrat/<slozka>/<soubor>, která používá send_from_directory.
+
+4. Nastavení kamery (Android Telefon)
+Aby telefon fungoval spolehlivě 24/7 a neucpal síť:
+
+Aplikace: IP Webcam Pro.
+
+Video:
+
+Rozlišení: 1280x720 (HD).
+
+Kvalita: 50.
+
+Délka chunku: 10-15 sekund.
+
+Formát: MPEG4 (.mp4) (pozor na reset do .mkv).
+
+Upload (SFTP):
+
+Host: Tailscale IP Raspberry Pi.
+
+Cesta: /home/cernamalina/zaznam_z_tel.
+
+Post-processing: "Delete after upload" (aby se nezaplnil telefon).
+
+Power Management (Kritické pro Xiaomi/Android):
+
+Displej: Musí být "aktivní" (Keep screen active).
+
+Trik: Použita aplikace "Black Screen" (černá obrazovka), aby se nevypálil OLED.
+
+Baterie: IP Webcam a Tailscale mají výjimku ze spořiče baterie.
+
+5. Automatická údržba (Cron)
+Protože web maže videa jen při návštěvě, běží na pozadí systémový "popelář", který čistí USB disk každou noc.
+
+Skript: /home/cernamalina/udrzba.sh
+
+Co dělá: Smaže z USB všechna videa starší než 7 dní.
+
+Kdy běží: Každý den v 03:00 ráno.
+
+Nastavení: crontab -e -> 0 3 * * * /home/cernamalina/udrzba.sh.
+
+6. Řešení problémů (Troubleshooting)
+Problém: Web ukazuje stará videa, nová nepřibývají.
+
+Běží telefon? (Je na WiFi/Tailscale? Svítí aplikace?).
+
+Změnil telefon formát? (Zkontroluj na RPi přes ls -l, jestli neposílá .mkv místo .mp4).
+
+Došlo místo na USB? (df -h).
+
+Problém: Web se načítá strašně pomalu.
+
+Videa jsou moc velká. Zkontroluj nastavení kvality v telefonu.
+
+Zkontroluj, zda v app.py funguje mazání velkých souborů (max_mb).
+
+Problém: Telefon přestal nahrávat.
+
+Restartuj telefon.
+
+Zapni aplikaci "Black Screen".
+
+Zkontroluj v IP Webcam -> "Test Upload" (SFTP).

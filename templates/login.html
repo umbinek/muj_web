@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Prihlaseni{% endblock %}
+
+{% block content %}
+<h2>Prihlaseni</h2>
+<form method="post">
+    <label>Uzivatel:</label><br>
+    <input type="text" name="username"><br><br>
+    <label>Heslo:</label><br>
+    <input type="password" name="password"><br><br>
+    <input type="submit" value="Prihlasit">
+</form>
+{% endblock %}

@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Měření u Gabči - Profi Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    /* Specifické styly jen pro tento dashboard */
+    .dashboard-body {
+        transition: background-color 0.5s ease;
+        padding: 20px;
+        border-radius: 15px;
+    }
+    .alarm-active {
+        background-color: #ffcccc !important;
+        border: 2px solid red;
+    }
+    .live-values {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 20px;
+    }
+    .value-card {
+        padding: 20px;
+        border-radius: 10px;
+        background: #f8f9fa;
+        width: 45%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        text-align: center;
+    }
+    .value-card h3 { margin: 0; font-size: 1em; color: #666; }
+    .value-card span { font-size: 2.5em; font-weight: bold; color: #333; }
+
+    .controls {
+        margin-top: 30px;
+        padding: 20px;
+        border-radius: 10px;
+        background: #ffffff;
+        border: 1px solid #eee;
+    }
+    #error-msg {
+        color: white;
+        background: #ff4444;
+        padding: 10px;
+        border-radius: 5px;
+        display: none;
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="container dashboard-body" id="main-dashboard">
+    <h1 class="text-center mb-4">🌡️ Smart Monitor - Gabča</h1>
+
+    <div id="error-msg" data-testid="error-banner" class="text-center">
+        ⚠️ CHYBA: Senzor je nedostupný!
+    </div>
+
+    <div class="live-values">
+        <div class="value-card">
+            <h3>Aktuální Teplota</h3>
+            <span id="current-temp">--</span> °C
+        </div>
+        <div class="value-card">
+            <h3>Aktuální Vlhkost</h3>
+            <span id="current-hum">--</span> %
+        </div>
+    </div>
+
+    <div class="text-center mb-3 text-muted" id="last-update">Načítám data...</div>
+
+    <div class="card p-3 shadow-sm">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <div class="controls shadow-sm">
+        <h3 class="h5">Nastavení systému</h3>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="threshold-input" class="col-form-label">Limit pro alarm (°C):</label>
+            </div>
+            <div class="col-auto">
+                <input type="number" id="threshold-input" class="form-control" value="{{ threshold }}">
+            </div>
+            <div class="col-auto">
+                <button id="save-threshold" class="btn btn-primary" onclick="updateThreshold()">Uložit limit</button>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="d-grid gap-2 d-md-block">
+            <button id="export-csv" class="btn btn-success" onclick="location.href='/api/export_csv'">
+                📥 Exportovat historii (CSV)
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let myChart = null;
+
+    async function updateThreshold() {
+        const newVal = document.getElementById('threshold-input').value;
+        const res = await fetch('/api/set_threshold', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({threshold: newVal})
+        });
+        if(res.ok) {
+            alert("Limit aktualizován!");
+            fetchData(); // Okamžitý refresh pro zrychlení testu
+        }
+    }
+
+    async function fetchData() {
+        try {
+            const statusRes = await fetch('/api/status');
+            if (!statusRes.ok) throw new Error("Senzor error");
+
+            const statusData = await statusRes.json();
+            document.getElementById('error-msg').style.display = 'none';
+
+            const tempSpan = document.getElementById('current-temp');
+            const dashboard = document.getElementById('main-dashboard');
+
+            tempSpan.innerText = statusData.temperature;
+            document.getElementById('current-hum').innerText = statusData.humidity;
+
+            // Logika alarmu - upraveno, aby to Playwright spolehlivě našel na body
+            if (statusData.alarm) {
+                document.body.classList.add('alarm-active');
+                dashboard.classList.add('alarm-active');
+                tempSpan.style.color = 'red';
+            } else {
+                document.body.classList.remove('alarm-active');
+                dashboard.classList.remove('alarm-active');
+                tempSpan.style.color = '#333';
+            }
+
+            const historyRes = await fetch('/api/history');
+            const historyData = await historyRes.json();
+            renderChart(historyData);
+
+            document.getElementById('last-update').innerText = `Poslední aktualizace: ${new Date().toLocaleTimeString()}`;
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById('error-msg').style.display = 'block';
+            document.getElementById('last-update').innerText = "Chyba komunikace!";
+        }
+    }
+
+    function renderChart(data) {
+        if (data.length === 0) return;
+        const labels = data.map(item => new Date(item.time).toLocaleTimeString('cs-CZ', {hour: '2-digit', minute:'2-digit'}));
+        const temps = data.map(item => item.temp);
+        const hums = data.map(item => item.hum);
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        if (myChart) myChart.destroy();
+
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Teplota (°C)', data: temps, borderColor: 'rgb(255, 99, 132)', tension: 0.3, fill: false },
+                    { label: 'Vlhkost (%)', data: hums, borderColor: 'rgb(54, 162, 235)', tension: 0.3, fill: false }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: false } }
+            }
+        });
+    }
+
+    fetchData();
+    setInterval(fetchData, 5000);
+</script>
+{% endblock %}
