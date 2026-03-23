@@ -1,1 +1,36 @@
+Tady je kompletní README.md v čistém Markdown formátu, připravený k tomu, abys ho jen zkopíroval a vložil do svého souboru.
 
+Markdown
+# Smart Home Hub (RPi 3 + ESP32)
+
+This is a distributed IoT system for monitoring my home and garden. It collects data from several sensors and cameras and shows everything on a web dashboard.
+
+## 🛠 Hardware
+* **Raspberry Pi 3 (Main Server):** The heart of the system. It runs the Flask backend and the database. It also has a DHT sensor for local temperature and humidity.
+* **ESP32 (Air Quality):** A wireless node that sends CO2/VOC data (PPM) over Wi-Fi.
+* **ESP32-CAM:** A camera that takes a photo of the garden every 10 seconds and uploads it to the server.
+* **Raspberry Pi Zero 2:** A security node running *Motion*. It detects movement and saves photos and videos to the central server.
+
+## 💻 Software Stack
+* **Backend:** Python 3 + Flask (using OOP principles).
+* **Database:** SQLite + SQLAlchemy for history and data tracking.
+* **Frontend:** HTML/CSS (Bootstrap) and JavaScript (Chart.js for graphs).
+* **Services:** Systemd (to make sure everything starts automatically after a reboot or power loss).
+* **Security:** Cloudflare Tunnel for HTTPS and hiding my home IP address.
+
+## ⚙️ Automation & Features
+* **Storage:** All media is saved to a USB drive on the main RPi 3. I have a Python script that runs every day and deletes files older than 7 days so the disk doesn't get full.
+* **CI/CD:** When I do a `git push`, **GitHub Actions** automatically runs **Pytest** to make sure the API and database logic are still working.
+* **Mobile Development:** I don't use a PC for this. I code on my **Xiaomi Mi 9 SE** phone using **Termux** and *Code-server*.
+* **Networking:** Everything is connected via **Tailscale VPN**. This lets me code and access the server from anywhere without needing a public IP.
+
+## 📂 Project Structure
+```text
+├── app.py              # Application factory
+├── models.py           # Database models (SQLAlchemy)
+├── routes.py           # Web and API routes
+├── services.py         # Sensor and logic management
+├── static/             # CSS, JS, and images
+├── templates/          # HTML files (Jinja2)
+├── tests/              # Pytest files
+└── smartsensor/        # Database and media storage
