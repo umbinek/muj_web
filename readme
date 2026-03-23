@@ -1,6 +1,3 @@
-Tady je kompletní README.md v čistém Markdown formátu, připravený k tomu, abys ho jen zkopíroval a vložil do svého souboru.
-
-Markdown
 # Smart Home Hub (RPi 3 + ESP32)
 
 This is a distributed IoT system for monitoring my home and garden. It collects data from several sensors and cameras and shows everything on a web dashboard.
